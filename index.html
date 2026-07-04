@@ -203,102 +203,59 @@ nav.scrolled {
     aspect-ratio: 3 / 4;
     border-radius: 24px;
     overflow: hidden;
-    background: transparent;
-    border: none;
-    box-shadow: none;
-    transition: transform 0.5s ease;
+    background: var(--glass);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--border);
+    box-shadow: 0 24px 64px rgba(0,0,0,0.08), 0 0 0 1px var(--border);
+    transition: transform 0.6s ease, box-shadow 0.6s ease;
+    animation: glassFloat 6s ease-in-out infinite;
   }
-  .photo-area__frame {
-    position: absolute;
-    inset: 0;
-    border: 2px solid var(--border);
-    border-radius: 24px;
-    z-index: 3;
-    pointer-events: none;
-    overflow: hidden;
-  }
-  .photo-area__corner {
-    position: absolute;
-    width: 28px;
-    height: 28px;
-    border: 3px solid var(--accent);
-    transition: all 0.4s ease;
-  }
-  .photo-area__corner--tl { top: -2px; left: -2px; border-right: none; border-bottom: none; border-radius: 24px 0 0 0; }
-  .photo-area__corner--tr { top: -2px; right: -2px; border-left: none; border-bottom: none; border-radius: 0 24px 0 0; }
-  .photo-area__corner--bl { bottom: -2px; left: -2px; border-right: none; border-top: none; border-radius: 0 0 0 24px; }
-  .photo-area__corner--br { bottom: -2px; right: -2px; border-left: none; border-top: none; border-radius: 0 0 24px 0; }
-  .photo-area:hover .photo-area__corner {
-    width: 40px;
-    height: 40px;
-    filter: drop-shadow(0 0 8px var(--accent));
-  }
-  .photo-area__border {
-    position: absolute;
-    inset: 0;
-    border-radius: 24px;
-    z-index: 2;
-    pointer-events: none;
-    background: linear-gradient(90deg, transparent, var(--accent), transparent);
-    background-size: 200% 100%;
-    opacity: 0;
-    animation: borderPulse 3s ease-in-out infinite;
+  @keyframes glassFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
   }
   .photo-area::before {
     content: '';
     position: absolute;
     inset: 0;
+    border-radius: 24px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.05) 50%, rgba(255,255,255,0) 100%);
     z-index: 2;
-    background: linear-gradient(180deg, transparent 50%, rgba(37, 99, 235, 0.04) 100%);
     pointer-events: none;
+    opacity: 0.6;
   }
   .photo-area::after {
     content: '';
     position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--accent), transparent);
-    animation: scanMove 2.5s linear infinite;
-    opacity: 0.8;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(from 0deg, transparent, var(--accent), transparent 30%);
+    animation: glassSpin 8s linear infinite;
+    opacity: 0.08;
+    z-index: 1;
+    pointer-events: none;
   }
-  @keyframes scanMove {
-    0% { left: -100%; }
-    100% { left: 200%; }
-  }
-  @keyframes borderPulse {
-    0%, 100% { opacity: 0; background-position: 0% 50%; }
-    50% { opacity: 0.15; background-position: 100% 50%; }
+  @keyframes glassSpin {
+    100% { transform: rotate(360deg); }
   }
   .photo-area:hover {
-    transform: scale(1.03);
-    box-shadow: 0 0 0 1px var(--border), 0 30px 70px rgba(0,0,0,0.12), 0 0 80px rgba(37, 99, 235, 0.2);
-  }
-  .photo-area__inner {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    border-radius: 24px;
-    overflow: hidden;
-    border: 1px solid var(--border);
-    box-shadow: 0 24px 64px rgba(0,0,0,0.08), 0 0 40px rgba(37, 99, 235, 0.15);
-    transition: border-color 0.4s ease, box-shadow 0.4s ease;
-  }
-  .photo-area:hover .photo-area__inner {
-    border-color: var(--accent);
-    box-shadow: 0 30px 70px rgba(0,0,0,0.12), 0 0 60px rgba(37, 99, 235, 0.25);
+    transform: scale(1.02) translateY(-4px);
+    box-shadow: 0 32px 80px rgba(0,0,0,0.14), 0 0 40px rgba(37, 99, 235, 0.12);
   }
   .photo-area img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
-    transition: transform 0.6s ease;
-    filter: saturate(0.9) contrast(1.05);
+    transition: transform 0.8s ease, filter 0.6s ease;
+    filter: saturate(0.85) contrast(1.05);
+    position: relative;
+    z-index: 0;
   }
   .photo-area:hover img {
-    transform: scale(1.05);
+    transform: scale(1.06);
   }
 
 /* EXPERIENCE TIMELINE */
@@ -371,17 +328,41 @@ nav.scrolled {
   font-size: 12px; color: var(--text-dim);
 }
 
-/* VOLUNTEER */
-.volunteer-card {
-  border-left: 4px solid var(--accent);
-  padding: 24px 28px;
-  background: var(--glass);
-  border-radius: 0 20px 20px 0;
-  border-top: 1px solid var(--border);
-  border-right: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
+/* PROJECTS */
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
 }
-.volunteer-card h3 { margin-bottom: 4px; }
+.project-card {
+  padding: 24px;
+  transition: transform 0.4s ease, border-color 0.4s ease;
+}
+.project-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--accent);
+}
+.project-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: var(--glass);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  margin-bottom: 16px;
+}
+.project-card h4 {
+  font-size: 1.1rem;
+  margin-bottom: 6px;
+}
+.project-desc {
+  color: var(--text-dim);
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
 
 /* LANGUAGES */
 .lang-grid {
@@ -521,7 +502,6 @@ nav.scrolled {
   .skills-grid { grid-template-columns: 1fr; gap: 14px; }
   .lang-grid { grid-template-columns: 1fr; gap: 10px; }
   .photo-area { max-width: 260px; }
-  .photo-area__corner { width: 22px; height: 22px; }
   h2 { font-size: 1.8rem; margin-bottom: 24px; }
 }
 
@@ -534,13 +514,6 @@ nav.scrolled {
   .hero-text p { font-size: 0.9rem; }
   .btn { padding: 12px 18px; font-size: 12px; }
   .photo-area { max-width: 220px; }
-  .photo-area__inner { border-radius: 16px; }
-  .photo-area__frame { border-radius: 16px; }
-  .photo-area__corner { width: 18px; height: 18px; border-width: 2px; }
-  .photo-area__corner--tl { border-radius: 16px 0 0 0; }
-  .photo-area__corner--tr { border-radius: 0 16px 0 0; }
-  .photo-area__corner--bl { border-radius: 0 0 0 16px; }
-  .photo-area__corner--br { border-radius: 0 0 16px 0; }
   .card { padding: 20px; border-radius: 16px; }
   .contact-grid { grid-template-columns: 1fr; gap: 12px; }
   .contact-card { padding: 18px; gap: 12px; }
@@ -580,8 +553,9 @@ nav.scrolled {
       <span></span><span></span><span></span>
     </button>
     <div class="nav-links">
-      <a href="#experience">Experience</a>
       <a href="#skills">Skills</a>
+      <a href="#experience">Experience</a>
+      <a href="#projects">Projects</a>
       <a href="#education">Education</a>
       <a href="#contact">Contact</a>
     </div>
@@ -592,8 +566,9 @@ nav.scrolled {
   </div>
 </nav>
 <div id="mobileNav" class="mobile-nav">
-  <a href="#experience">Experience</a>
   <a href="#skills">Skills</a>
+  <a href="#experience">Experience</a>
+  <a href="#projects">Projects</a>
   <a href="#education">Education</a>
   <a href="#contact">Contact</a>
   <a href="mailto:walterchurchil58@gmail.com" class="btn-nav mobile-nav-cta">EMAIL ME</a>
@@ -606,7 +581,7 @@ nav.scrolled {
       <div class="hero-text reveal">
         <span class="eyebrow">Frontend Engineer | UI/UX Designer</span>
         <h1>Churchil Walter<br>Okello</h1>
-        <span class="role">ICT Specialist & Network Developer</span>
+        <span class="role">Software Developer & IT Specialist</span>
         <p>A tech-savvy engineer crafting fast, clean, and reliable web applications. Specializing in Laravel, Vue.js, and React with strong focus on scalable systems, API integration, seamless user experiences, and robust network infrastructure.</p>
         <div class="hero-btns">
           <a href="#experience" class="btn btn-primary magnetic">My Experience</a>
@@ -614,63 +589,7 @@ nav.scrolled {
         </div>
       </div>
       <div class="photo-area reveal">
-        <div class="photo-area__frame">
-          <div class="photo-area__corner photo-area__corner--tl"></div>
-          <div class="photo-area__corner photo-area__corner--tr"></div>
-          <div class="photo-area__corner photo-area__corner--bl"></div>
-          <div class="photo-area__corner photo-area__corner--br"></div>
-          <div class="photo-area__border"></div>
-        </div>
-        <div class="photo-area__inner">
-          <img src="profile.png" alt="Churchil Walter Okello - Graduation Photo">
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- EXPERIENCE -->
-  <section id="experience" class="wrap">
-    <h2 class="reveal">Work Experience</h2>
-    <div class="timeline">
-      <div class="timeline-item reveal">
-        <div class="timeline-title">Front End Developer Intern</div>
-        <div class="timeline-meta">Amazon Networks | 05/2026 — Present</div>
-        <div class="timeline-desc">
-          <ul>
-            <li>Developed user-friendly interfaces using HTML, CSS, and JavaScript to enhance website functionality.</li>
-            <li>Collaborated with back-end developers to integrate APIs for seamless data transfer.</li>
-            <li>Conducted cross-browser testing to ensure consistent performance across multiple platforms.</li>
-            <li>Assisted in troubleshooting and debugging code issues to improve application stability.</li>
-            <li>Contributing to internal business systems for improved operational efficiency and workflow automation.</li>
-            <li>Conducting testing and quality assurance to ensure software meets organizational requirements.</li>
-          </ul>
-        </div>
-      </div>
-      <div class="timeline-item reveal">
-        <div class="timeline-title">Web Developer Intern</div>
-        <div class="timeline-meta">Samsung Kenya (Panna Music Eldoret) | 06/2025 — 09/2025</div>
-        <div class="timeline-desc">
-          <ul>
-            <li>Designed and developed the official website for Panna Music Company (PMC), focusing on modern, responsive design.</li>
-            <li>Collaborated on UI/UX improvements with mobile-first design and smooth user flow.</li>
-            <li>Built a React-based e-commerce frontend with product listing, category filtering, and dynamic navigation.</li>
-            <li>Integrated dynamic category rendering to simplify product management for non-technical users.</li>
-          </ul>
-        </div>
-      </div>
-      <div class="timeline-item reveal">
-        <div class="timeline-title">Full Spectrum ICT Professional (Attachment)</div>
-        <div class="timeline-meta">KAA - Kisumu International Airport | 06/2024 — 08/2024</div>
-        <div class="timeline-desc">
-          <ul>
-            <li>Participated in development and testing of internal software tools supporting administrative workflows.</li>
-            <li>Provided Level I and II ICT support, troubleshooting hardware, software, and network issues.</li>
-            <li>Supported flight information display systems (FIDS) and Airports Operations Database (AODB).</li>
-            <li>Installed, configured, and maintained Windows, Office, SAP GUI, VPN, and enterprise applications.</li>
-            <li>Supported LAN, WAN, and wireless network infrastructure for reliable connectivity.</li>
-            <li>Delivered first-line technical support and end-user training.</li>
-          </ul>
-        </div>
+        <img src="profile.png" alt="Churchil Walter Okello - Graduation Photo">
       </div>
     </div>
   </section>
@@ -747,6 +666,78 @@ nav.scrolled {
     </div>
   </section>
 
+  <!-- EXPERIENCE -->
+  <section id="experience" class="wrap">
+    <h2 class="reveal">Work Experience</h2>
+    <div class="timeline">
+      <div class="timeline-item reveal">
+        <div class="timeline-title">Front End Developer Intern</div>
+        <div class="timeline-meta">Amazon Networks | 05/2026 — Present</div>
+        <div class="timeline-desc">
+          <ul>
+            <li>Developed user-friendly interfaces using HTML, CSS, and JavaScript to enhance website functionality.</li>
+            <li>Collaborated with back-end developers to integrate APIs for seamless data transfer.</li>
+            <li>Conducted cross-browser testing to ensure consistent performance across multiple platforms.</li>
+            <li>Assisted in troubleshooting and debugging code issues to improve application stability.</li>
+            <li>Contributing to internal business systems for improved operational efficiency and workflow automation.</li>
+            <li>Conducting testing and quality assurance to ensure software meets organizational requirements.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="timeline-item reveal">
+        <div class="timeline-title">Web Developer Intern</div>
+        <div class="timeline-meta">Samsung Kenya (Panna Music Eldoret) | 06/2025 — 09/2025</div>
+        <div class="timeline-desc">
+          <ul>
+            <li>Designed and developed the official website for Panna Music Company (PMC), focusing on modern, responsive design.</li>
+            <li>Collaborated on UI/UX improvements with mobile-first design and smooth user flow.</li>
+            <li>Built a React-based e-commerce frontend with product listing, category filtering, and dynamic navigation.</li>
+            <li>Integrated dynamic category rendering to simplify product management for non-technical users.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="timeline-item reveal">
+        <div class="timeline-title">Full Spectrum ICT Professional (Attachment)</div>
+        <div class="timeline-meta">KAA - Kisumu International Airport | 06/2024 — 08/2024</div>
+        <div class="timeline-desc">
+          <ul>
+            <li>Participated in development and testing of internal software tools supporting administrative workflows.</li>
+            <li>Provided Level I and II ICT support, troubleshooting hardware, software, and network issues.</li>
+            <li>Supported flight information display systems (FIDS) and Airports Operations Database (AODB).</li>
+            <li>Installed, configured, and maintained Windows, Office, SAP GUI, VPN, and enterprise applications.</li>
+            <li>Supported LAN, WAN, and wireless network infrastructure for reliable connectivity.</li>
+            <li>Delivered first-line technical support and end-user training.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section id="projects" class="wrap">
+    <h2 class="reveal">Projects</h2>
+    <div class="projects-grid">
+      <div class="card project-card reveal">
+        <div class="project-icon">🛒</div>
+        <h4>Online Grocery Store System</h4>
+        <p class="eyebrow">E-Commerce | CSAMPUD Third Year Project</p>
+        <p class="project-desc">Developed a complete online grocery store system covering the full e-commerce cycle during CSAMPUD third year project. Features include product catalog, cart management, checkout flow, and order tracking.</p>
+      </div>
+      <div class="card project-card reveal">
+        <div class="project-icon">🎵</div>
+        <h4>Panna Music Company Website</h4>
+        <p class="eyebrow">React | Responsive Design</p>
+        <p class="project-desc">Developed a responsive, modern website for Panna Music Company (PMC) in Eldoret. Built with React, featuring dynamic category rendering, product listings, and smooth mobile-first user flow.</p>
+      </div>
+      <div class="card project-card reveal">
+        <div class="project-icon">📦</div>
+        <h4>Inventory Management System</h4>
+        <p class="eyebrow">Laravel | Business Solutions</p>
+        <p class="project-desc">Developed a complete inventory management system for Amazons Network. Streamlines stock tracking, order processing, and reporting to improve operational efficiency and workflow automation.</p>
+      </div>
+    </div>
+  </section>
+
   <!-- EDUCATION -->
   <section id="education" class="wrap">
     <h2 class="reveal">Education</h2>
@@ -771,16 +762,6 @@ nav.scrolled {
         <div class="edu-degree">Kenya Certificate of Primary Education</div>
         <div class="edu-year">01/2009 — 11/2016 • Attained 387 Marks</div>
       </div>
-    </div>
-  </section>
-
-  <!-- VOLUNTEER -->
-  <section class="wrap">
-    <h2 class="reveal">Volunteer Experience</h2>
-    <div class="volunteer-card reveal">
-      <h3>Youth Chairman</h3>
-      <p class="eyebrow">St John the 23rd Parish, Eldoret</p>
-      <p style="color:var(--text-dim); font-size:0.9rem; margin-top:8px;">Led strategic initiatives aimed at strengthening youth participation and fostering a more inclusive, welcoming church community. Successfully transformed youth perceptions by promoting engagement, personal development, and social responsibility through sports events, mentorship programs, and community outreach.</p>
     </div>
   </section>
 
@@ -1040,6 +1021,19 @@ window.addEventListener('scroll', () => {
   const nav = document.getElementById('navbar');
   if(window.scrollY > 50) nav.classList.add('scrolled');
   else nav.classList.remove('scrolled');
+});
+
+const navToggle = document.getElementById('navToggle');
+const mobileNav = document.getElementById('mobileNav');
+navToggle.addEventListener('click', () => {
+  navToggle.classList.toggle('active');
+  mobileNav.classList.toggle('open');
+});
+mobileNav.querySelectorAll('a').forEach(link => {
+  link.addEventListener('click', () => {
+    navToggle.classList.remove('active');
+    mobileNav.classList.remove('open');
+  });
 });
 
 const observer = new IntersectionObserver(entries => {
