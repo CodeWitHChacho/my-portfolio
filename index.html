@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Churchil — Systems Architect</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+    --bg: #030712;
+    --bg-card: rgba(17, 24, 39, 0.7);
+    --primary: #38bdf8;
+    --secondary: #818cf8;
+    --text: #f3f4f6;
+    --text-dim: #9ca3af;
+    --border: rgba(255, 255, 255, 0.1);
+    --glow: rgba(56, 189, 248, 0.15);
+    --font-main: 'Space Grotesk', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+    --cursor-color: 255, 255, 255;
+}
+
+body.light-mode {
+    --bg: #f8fafc;
+    --bg-card: rgba(255, 255, 255, 0.8);
+    --primary: #0284c7;
+    --secondary: #4f46e5;
+    --text: #0f172a;
+    --text-dim: #475569;
+    --border: rgba(15, 23, 42, 0.1);
+    --glow: rgba(2, 132, 199, 0.1);
+    --cursor-color: 0, 0, 0;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; cursor: none !important; }
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-main);
+    transition: background 0.5s ease, color 0.5s ease;
+    overflow-x: hidden;
+}
+
+/* === CUSTOM CURSOR === */
+#cursor {
+    width: 8px; height: 8px;
+    background: rgb(var(--cursor-color));
+    border-radius: 50%;
+    position: fixed; pointer-events: none; z-index: 9999;
+}
+#cursor-follower {
+    width: 40px; height: 40px;
+    border: 1.5px solid rgba(var(--cursor-color), 0.3);
+    border-radius: 50%;
+    position: fixed; pointer-events: none; z-index: 9998;
+    transition: width 0.3s, height 0.3s, background 0.3s;
+}
+
+/* === INTERACTIVE BACKGROUND === */
+#canvas-bg {
+    position: fixed; inset: 0; z-index: -1;
+    opacity: 0.6;
+}
+
+/* === NAVIGATION === */
+nav {
+    position: fixed; top: 0; width: 100%; z-index: 1000;
+    padding: 20px 0; backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+}
+.nav-content {
+    max-width: 1400px; margin: 0 auto; padding: 0 40px;
+    display: flex; justify-content: space-between; align-items: center;
+}
+.logo { font-weight: 700; font-size: 1.5rem; letter-spacing: -1px; }
+.logo span { color: var(--primary); }
+
+.nav-links { display: flex; gap: 30px; }
+.nav-link { 
+    text-decoration: none; color: var(--text-dim); font-size: 0.9rem;
+    font-family: var(--font-mono); transition: color 0.3s;
+}
+.nav-link:hover { color: var(--primary); }
+
+/* === HERO SECTION === */
+.hero {
+    min-height: 100vh; display: flex; align-items: center;
+    padding: 0 40px; max-width: 1400px; margin: 0 auto;
+    perspective: 1000px;
+}
+.hero-grid {
+    display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 60px; align-items: center;
+}
+
+.hero-text h1 {
+    font-size: clamp(3rem, 8vw, 6rem); line-height: 0.9;
+    margin-bottom: 20px; font-weight: 700;
+}
+.hero-text p {
+    font-size: 1.2rem; color: var(--text-dim); max-width: 600px;
+    margin-bottom: 40px; line-height: 1.6;
+}
+
+/* THE PHOTO STYLING */
+.photo-frame {
+    position: relative;
+    width: 100%; max-width: 450px;
+    border-radius: 24px;
+    transform-style: preserve-3d;
+    transition: transform 0.1s ease-out;
+}
+.photo-frame img {
+    width: 100%; border-radius: 24px;
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+    filter: saturate(1.1) contrast(1.05);
+}
+.photo-frame::after {
+    content: ''; position: absolute; inset: -1px;
+    border: 1px solid var(--primary); border-radius: 24px;
+    transform: translateZ(20px); pointer-events: none;
+}
+
+/* === SHARED CARD STYLING === */
+.glass-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 30px;
+    backdrop-filter: blur(12px);
+    transition: all 0.3s ease;
+    transform-style: preserve-3d;
+}
+.glass-card:hover {
+    border-color: var(--primary);
+    box-shadow: 0 0 30px var(--glow);
+}
+
+/* === SECTIONS === */
+section { padding: 100px 40px; max-width: 1400px; margin: 0 auto; }
+.section-title { font-size: 2.5rem; margin-bottom: 50px; display: flex; align-items: center; gap: 15px; }
+.section-title::after { content: ''; height: 1px; flex-grow: 1; background: var(--border); }
+
+/* === PROJECTS GRID === */
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 25px; }
+
+/* === THEME TOGGLE === */
+.theme-btn {
+    background: var(--bg-card); border: 1px solid var(--border);
+    color: var(--text); padding: 10px; border-radius: 50%;
+    width: 45px; height: 45px; display: flex; align-items: center; justify-content: center;
+}
+
+/* === REVEAL ANIMATION === */
+.reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s ease-out; }
+.reveal.active { opacity: 1; transform: translateY(0); }
+
+@media (max-width: 968px) {
+    .hero-grid { grid-template-columns: 1fr; text-align: center; }
+    .photo-frame { margin: 0 auto; }
+}
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-follower"></div>
+<canvas id="canvas-bg"></canvas>
+
+<nav>
+    <div class="nav-content">
+        <div class="logo">CHURCHIL<span>.DEV</span></div>
+        <div class="nav-links">
+            <a href="#about" class="nav-link magnetic">/About</a>
+            <a href="#projects" class="nav-link magnetic">/Works</a>
+            <a href="#experience" class="nav-link magnetic">/Experience</a>
+            <button id="themeToggle" class="theme-btn magnetic">🌓</button>
+        </div>
+    </div>
+</nav>
+
+<main>
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-grid">
+            <div class="hero-text">
+                <span style="font-family: var(--font-mono); color: var(--primary);">01. Introduction</span>
+                <h1>Crafting <br><span style="color: var(--secondary)">Digital</span> Logic.</h1>
+                <p>Full-stack engineer specializing in Laravel & Vue 3 ecosystems. I build scalable systems where clean architecture meets intuitive user experience.</p>
+                <div style="display: flex; gap: 20px;">
+                    <a href="#contact" class="glass-card magnetic" style="padding: 15px 35px; text-decoration: none; color: var(--primary); font-weight: 700;">Initiate Talk</a>
+                </div>
+            </div>
+            <div class="photo-frame tilt">
+                <img src="https://m-files.p-cdn.com/1/1720/0845014138-0.jpeg" alt="Churchil Graduation">
+            </div>
+        </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section id="projects">
+        <h2 class="section-title">Selected Lab Works</h2>
+        <div class="grid">
+            <div class="glass-card tilt reveal">
+                <h3 style="font-family: var(--font-mono); color: var(--primary);">// Amazon Networks</h3>
+                <p style="margin: 15px 0; color: var(--text-dim);">A Vue 3 operations dashboard for networking infrastructure management.</p>
+                <div style="font-size: 0.8rem; color: var(--secondary);">VUE 3 • TAILWIND • REST API</div>
+            </div>
+            <div class="glass-card tilt reveal">
+                <h3 style="font-family: var(--font-mono); color: var(--primary);">// Ledger API</h3>
+                <p style="margin: 15px 0; color: var(--text-dim);">Scalable backend service for staff ledgers and dispatch tracking.</p>
+                <div style="font-size: 0.8rem; color: var(--secondary);">LARAVEL • POSTGRESQL • REDIS</div>
+            </div>
+            <div class="glass-card tilt reveal">
+                <h3 style="font-family: var(--font-mono); color: var(--primary);">// Fresh Market</h3>
+                <p style="margin: 15px 0; color: var(--text-dim);">E-commerce marketplace connecting local farmers to urban consumers.</p>
+                <div style="font-size: 0.8rem; color: var(--secondary);">PHP • MYSQL • VUE</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- EXPERIENCE -->
+    <section id="experience">
+        <h2 class="section-title">Career Log</h2>
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+            <div class="glass-card reveal">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div>
+                        <h3>Frontend Engineer</h3>
+                        <p style="color: var(--primary);">Amazon Networks</p>
+                    </div>
+                    <span style="font-family: var(--font-mono); font-size: 0.8rem;">2025 — PRESENT</span>
+                </div>
+                <ul style="margin-top: 20px; padding-left: 20px; color: var(--text-dim);">
+                    <li>Architected Vue 3 operations dashboards from zero.</li>
+                    <li>Integrated real-time dispatch monitoring systems.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- GITHUB / STATS -->
+    <section id="stats">
+        <h2 class="section-title">System Metrics</h2>
+        <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
+            <div class="glass-card tilt" style="text-align: center;">
+                <div style="font-size: 3rem; font-weight: 700; color: var(--primary);">900+</div>
+                <div style="font-family: var(--font-mono); font-size: 0.8rem;">Commits Pushed</div>
+            </div>
+            <div class="glass-card tilt" style="text-align: center;">
+                <div style="font-size: 3rem; font-weight: 700; color: var(--secondary);">28</div>
+                <div style="font-family: var(--font-mono); font-size: 0.8rem;">Deployments</div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script>
+/* === MOUSE ENGINE === */
+const cursor = document.getElementById('cursor');
+const follower = document.getElementById('cursor-follower');
+let mouseX = 0, mouseY = 0;
+let cursorX = 0, cursorY = 0;
+let followerX = 0, followerY = 0;
+
+document.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+});
+
+const moveCursor = () => {
+    cursorX += (mouseX - cursorX) * 0.15;
+    cursorY += (mouseY - cursorY) * 0.15;
+    followerX += (mouseX - followerX) * 0.1;
+    followerY += (mouseY - followerY) * 0.1;
+
+    cursor.style.transform = `translate(${cursorX}px, ${cursorY}px)`;
+    follower.style.transform = `translate(${followerX - 16}px, ${followerY - 16}px)`;
+    requestAnimationFrame(moveCursor);
+};
+moveCursor();
+
+/* === MAGNETIC EFFECT === */
+const magnets = document.querySelectorAll('.magnetic');
+magnets.forEach(el => {
+    el.addEventListener('mousemove', (e) => {
+        const rect = el.getBoundingClientRect();
+        const x = e.clientX - rect.left - rect.width/2;
+        const y = e.clientY - rect.top - rect.height/2;
+        el.style.transform = `translate(${x * 0.4}px, ${y * 0.4}px)`;
+        follower.style.width = '60px';
+        follower.style.height = '60px';
+        follower.style.background = 'rgba(var(--cursor-color), 0.1)';
+    });
+    el.addEventListener('mouseleave', () => {
+        el.style.transform = `translate(0, 0)`;
+        follower.style.width = '40px';
+        follower.style.height = '40px';
+        follower.style.background = 'transparent';
+    });
+});
+
+/* === 3D TILT === */
+const cards = document.querySelectorAll('.tilt');
+cards.forEach(card => {
+    card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width;
+        const y = (e.clientY - rect.top) / rect.height;
+        const rX = (y - 0.5) * 20;
+        const rY = (x - 0.5) * -20;
+        card.style.transform = `perspective(1000px) rotateX(${rX}deg) rotateY(${rY}deg) scale3d(1.02, 1.02, 1.02)`;
+    });
+    card.addEventListener('mouseleave', () => {
+        card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+    });
+});
+
+/* === THEME ENGINE === */
+const themeToggle = document.getElementById('themeToggle');
+themeToggle.addEventListener('click', () => {
+    document.body.classList.toggle('light-mode');
+    localStorage.setItem('theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
+});
+
+/* === INTERACTIVE CANVAS === */
+const canvas = document.getElementById('canvas-bg');
+const ctx = canvas.getContext('2d');
+let points = [];
+
+const resize = () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+};
+window.addEventListener('resize', resize);
+resize();
+
+class Point {
+    constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.vx = (Math.random() - 0.5) * 0.5;
+        this.vy = (Math.random() - 0.5) * 0.5;
+    }
+    update() {
+        this.x += this.vx; this.y += this.vy;
+        if(this.x < 0 || this.x > canvas.width) this.vx *= -1;
+        if(this.y < 0 || this.y > canvas.height) this.vy *= -1;
+    }
+}
+
+for(let i=0; i<80; i++) points.push(new Point());
+
+function animateCanvas() {
+    ctx.clearRect(0,0,canvas.width, canvas.height);
+    const color = getComputedStyle(document.body).getPropertyValue('--primary');
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 0.2;
+
+    points.forEach(p => {
+        p.update();
+        points.forEach(p2 => {
+            const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
+            if(dist < 150) {
+                ctx.globalAlpha = 1 - dist/150;
+                ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
+            }
+        });
+        const mDist = Math.hypot(p.x - mouseX, p.y - mouseY);
+        if(mDist < 200) {
+            ctx.globalAlpha = 1 - mDist/200;
+            ctx.lineWidth = 1;
+            ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(mouseX, mouseY); ctx.stroke();
+        }
+    });
+    requestAnimationFrame(animateCanvas);
+}
+animateCanvas();
+
+/* === REVEAL ON SCROLL === */
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('active'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
